@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tekan Tombol — Keypress Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--blue:#1a6ef5;--blue-light:#e8f0fe;--green:#16a05c;--green-light:#e6f9f0;--red:#e03030;--amber:#e07a00;--gray:#f4f5f7;--gray2:#e8eaed;--text:#1a1a2e;--text2:#5a5f72;--white:#fff;--radius:16px;--radius-sm:10px;--shadow:0 4px 24px rgba(26,110,245,0.10)}
+    body{font-family:'Nunito',sans-serif;background:#f0f4ff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;color:var(--text)}
+    .topbar{width:100%;max-width:580px;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+    .back{text-decoration:none;font-size:13px;color:var(--text2);font-weight:700}
+    .back:hover{color:var(--blue)}
+    header{text-align:center;margin-bottom:20px}
+    header h1{font-size:22px;font-weight:800;color:var(--blue)}
+    header p{font-size:13px;color:var(--text2);margin-top:4px}
+    .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;width:100%;max-width:580px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+    .stat{background:var(--gray);border-radius:var(--radius-sm);padding:10px;text-align:center}
+    .slabel{font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+    .sval{font-size:20px;font-weight:800;color:var(--text)}
+    .sec-lbl{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+    .row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+    .pill{flex:1;min-width:60px;border:2px solid var(--gray2);background:var(--white);color:var(--text2);border-radius:var(--radius-sm);padding:7px 4px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .12s;text-align:center}
+    .pill:hover{border-color:var(--blue);color:var(--blue)}
+    .pill.on{background:var(--blue);border-color:var(--blue);color:var(--white)}
+    .mode-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+    .mode-card{border:2px solid var(--gray2);border-radius:var(--radius);padding:12px 8px;cursor:pointer;text-align:center;background:var(--white);transition:all .12s}
+    .mode-card:hover{background:var(--gray)}
+    .mode-card.on{border-color:var(--blue);background:var(--blue-light)}
+    .mode-card.on .mc-title{color:#0d47a1}
+    .mc-icon{font-size:20px;margin-bottom:4px}
+    .mc-title{font-size:13px;font-weight:800;color:var(--text)}
+    .mc-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+    #streak-bar{display:flex;gap:4px;justify-content:center;align-items:center;margin-bottom:10px}
+    .sdot{width:8px;height:8px;border-radius:50%;background:var(--gray2);transition:background .15s,transform .15s}
+    .sdot.lit{background:#e07a00;transform:scale(1.2)}
+    .sdot.full{background:var(--green)}
+    #arena{position:relative;width:100%;height:260px;border-radius:var(--radius);border:1px solid var(--gray2);background:var(--gray);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:10px;gap:14px}
+    .key-display{display:flex;flex-direction:column;align-items:center;gap:10px}
+    .key-cap{min-width:86px;height:86px;background:var(--white);border:1px solid var(--gray2);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 3px 0 var(--gray2);transition:box-shadow .08s,transform .08s;padding:0 12px;gap:2px}
+    .key-cap.correct{border-color:var(--green);box-shadow:0 3px 0 var(--green);background:var(--green-light)}
+    .key-cap.wrong{border-color:var(--red);box-shadow:0 3px 0 var(--red);background:#fdeaea}
+    .key-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
+    .badge-upper{background:#e8f0fe;color:#0d47a1}
+    .badge-lower{background:#e6f9f0;color:#0a5c35}
+    .badge-shift{background:#fff3e0;color:#633806}
+    .badge-fn{background:#ede7f6;color:#4527a0}
+    .key-main{font-size:34px;font-weight:800;color:var(--text);line-height:1}
+    .key-hint{font-size:12px;color:var(--text2)}
+    .prompt-lbl{font-size:13px;color:var(--text2);font-weight:600}
+    .lives{display:flex;gap:6px;justify-content:center}
+    .heart{font-size:16px;transition:opacity .2s}
+    .heart.dead{opacity:0.2}
+    #tbar{width:100%;height:4px;background:var(--gray2);border-radius:2px;overflow:hidden;margin-bottom:12px}
+    #tfill{height:100%;width:100%;background:var(--blue);border-radius:2px;transition:width .08s linear,background .25s}
+    .ov{position:absolute;inset:0;background:var(--white);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center}
+    .ov h2{font-size:17px;font-weight:800}
+    .ov p{font-size:13px;color:var(--text2);max-width:300px;line-height:1.6}
+    .startbtn{background:var(--blue);color:var(--white);border:none;border-radius:var(--radius-sm);padding:10px 28px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px}
+    .startbtn:hover{background:#1458cc}
+    .rsgrid{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+    .rscard{background:var(--gray);border-radius:var(--radius-sm);padding:10px 14px;text-align:center;min-width:65px}
+    .rscard .v{font-size:20px;font-weight:800}
+    .rscard .l{font-size:11px;color:var(--text2);font-weight:700;margin-top:2px}
+    #feedback-flash{position:absolute;inset:0;opacity:0;border-radius:var(--radius);pointer-events:none;transition:opacity .08s}
+    #feedback-flash.show{opacity:1}
+    #combo-pop{position:absolute;top:12px;right:12px;font-size:13px;font-weight:800;color:#e07a00;opacity:0;transition:opacity .2s}
+    #combo-pop.show{opacity:1}
+    #hint{font-size:12px;color:var(--text2);text-align:center}
+  </style>
+</head>
+<body>
+  <div class="topbar"><a href="index.html" class="back">← Kembali</a></div>
+  <header><h1>⌨️ Latihan Keyboard</h1><p>Tekan tombol yang muncul secepat mungkin!</p></header>
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><div class="slabel">Skor</div><div class="sval" id="score">0</div></div>
+      <div class="stat"><div class="slabel">Streak</div><div class="sval" id="streak" style="color:#e07a00">0</div></div>
+      <div class="stat"><div class="slabel">Best</div><div class="sval" id="best">0</div></div>
+      <div class="stat"><div class="slabel" id="stat4-lbl">Salah</div><div class="sval" id="stat4">0</div></div>
+    </div>
+    <div class="sec-lbl">Mode game</div>
+    <div class="mode-cards">
+      <div class="mode-card on" onclick="setGameMode('fifty',this)"><div class="mc-icon">5️⃣0️⃣</div><div class="mc-title">50 soal</div><div class="mc-desc">Selesaikan 50 tombol</div></div>
+      <div class="mode-card" onclick="setGameMode('time',this)"><div class="mc-icon">⏱️</div><div class="mc-title">Time attack</div><div class="mc-desc">60 detik, sebanyak mungkin!</div></div>
+      <div class="mode-card" onclick="setGameMode('survival',this)"><div class="mc-icon">❤️</div><div class="mc-title">Survival</div><div class="mc-desc">3 nyawa — salah 3x game over</div></div>
+    </div>
+    <div class="sec-lbl">Kesulitan tombol</div>
+    <div class="row">
+      <button class="pill on" onclick="setDiff('lower',this)">a–z kecil</button>
+      <button class="pill" onclick="setDiff('upper',this)">A–Z kapital</button>
+      <button class="pill" onclick="setDiff('both',this)">a–z + A–Z</button>
+      <button class="pill" onclick="setDiff('num',this)">+ Angka</button>
+      <button class="pill" onclick="setDiff('sym',this)">+ Simbol</button>
+      <button class="pill" onclick="setDiff('all',this)">+ F1–F12</button>
+    </div>
+    <div id="streak-bar"></div>
+    <div id="arena">
+      <div id="feedback-flash"></div>
+      <div id="combo-pop"></div>
+      <div class="ov" id="ov-start">
+        <div style="font-size:36px">⌨️</div>
+        <h2>Latihan Keyboard</h2>
+        <p>Pilih mode dan kesulitan. Perhatikan huruf kecil vs kapital — keduanya beda!</p>
+        <button class="startbtn" onclick="startGame()">Mulai</button>
+      </div>
+      <div class="ov" id="ov-result" style="display:none">
+        <div style="font-size:36px" id="r-em">🎉</div>
+        <h2 id="r-title">Selesai!</h2>
+        <div class="rsgrid">
+          <div class="rscard"><div class="v" id="r-score">0</div><div class="l">Skor</div></div>
+          <div class="rscard"><div class="v" id="r-streak" style="color:#e07a00">0</div><div class="l">Best streak</div></div>
+          <div class="rscard"><div class="v" id="r-acc" style="color:#16a05c">0%</div><div class="l">Akurasi</div></div>
+          <div class="rscard"><div class="v" id="r-total">0</div><div class="l">Soal</div></div>
+        </div>
+        <button class="startbtn" onclick="startGame()">Main lagi</button>
+      </div>
+      <div class="key-display" id="key-display" style="display:none">
+        <div class="prompt-lbl">Tekan tombol ini:</div>
+        <div class="key-cap" id="key-cap">
+          <div class="key-badge" id="key-badge"></div>
+          <div class="key-main" id="key-main">A</div>
+        </div>
+        <div class="key-hint" id="key-hint"></div>
+        <div class="lives" id="lives" style="display:none"></div>
+      </div>
+    </div>
+    <div id="tbar"><div id="tfill"></div></div>
+    <div id="hint">Huruf kecil = ketik biasa &nbsp;|&nbsp; Huruf kapital = Shift + huruf</div>
+  </div>
+  <script>
+    const LOWER='abcdefghijklmnopqrstuvwxyz'.split('').map(k=>({key:k,display:k,hint:'Ketik biasa',badge:'huruf kecil',badgeClass:'badge-lower'}));
+    const UPPER='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(k=>({key:k,display:k,hint:'Shift + '+k.toLowerCase(),badge:'kapital',badgeClass:'badge-upper'}));
+    const DIGITS='1234567890'.split('').map(k=>({key:k,display:k,hint:'Angka '+k,badge:'angka',badgeClass:'badge-lower'}));
+    const SYMBOLS=[{key:'!',display:'!',hint:'Shift + 1',badge:'Shift',badgeClass:'badge-shift'},{key:'@',display:'@',hint:'Shift + 2',badge:'Shift',badgeClass:'badge-shift'},{key:'#',display:'#',hint:'Shift + 3',badge:'Shift',badgeClass:'badge-shift'},{key:'$',display:'$',hint:'Shift + 4',badge:'Shift',badgeClass:'badge-shift'},{key:'%',display:'%',hint:'Shift + 5',badge:'Shift',badgeClass:'badge-shift'},{key:'&',display:'&',hint:'Shift + 7',badge:'Shift',badgeClass:'badge-shift'},{key:'*',display:'*',hint:'Shift + 8',badge:'Shift',badgeClass:'badge-shift'},{key:'-',display:'-',hint:'Tanda minus',badge:'simbol',badgeClass:'badge-lower'},{key:'=',display:'=',hint:'Tanda sama',badge:'simbol',badgeClass:'badge-lower'},{key:',',display:',',hint:'Koma',badge:'simbol',badgeClass:'badge-lower'},{key:'.',display:'.',hint:'Titik',badge:'simbol',badgeClass:'badge-lower'},{key:'/',display:'/',hint:'Garis miring',badge:'simbol',badgeClass:'badge-lower'}];
+    const FKEYS=[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>({key:'F'+n,display:'F'+n,hint:'Tombol F'+n,badge:'fungsi',badgeClass:'badge-fn',isFn:true}));
+    const POOLS={lower:LOWER,upper:UPPER,both:[...LOWER,...UPPER],num:[...LOWER,...UPPER,...DIGITS],sym:[...LOWER,...UPPER,...DIGITS,...SYMBOLS],all:[...LOWER,...UPPER,...DIGITS,...SYMBOLS,...FKEYS]};
+    const STREAK_MAX=10,KEY_TIME=4000,TIME_SECS=60,FIFTY=50,MAX_LIVES=3;
+    let diff='lower',gameMode='fifty',pool=POOLS.lower;
+    let score=0,streak=0,bestStreak=0,wrongCount=0,totalCount=0,lives=MAX_LIVES;
+    let currentKey=null,keyTimer=null,clockTimer=null,clockLeft=0,active=false;
+    function setGameMode(m,btn){gameMode=m;document.querySelectorAll('.mode-card').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+    function setDiff(d,btn){diff=d;pool=POOLS[d];document.querySelectorAll('.pill').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+    function makeStreakBar(){const bar=document.getElementById('streak-bar');bar.innerHTML='';if(gameMode==='time')return;for(let i=0;i<STREAK_MAX;i++){const d=document.createElement('div');d.className='sdot'+(i<streak?(streak>=STREAK_MAX?' full':' lit'):'');bar.appendChild(d)}}
+    function updateLivesUI(){const el=document.getElementById('lives');if(gameMode!=='survival'){el.style.display='none';return}el.style.display='flex';el.innerHTML='';for(let i=0;i<MAX_LIVES;i++){const h=document.createElement('span');h.className='heart'+(i>=lives?' dead':'');h.textContent='❤️';el.appendChild(h)}}
+    function updateStat4(){const lbl=document.getElementById('stat4-lbl'),val=document.getElementById('stat4');if(gameMode==='fifty'){lbl.textContent='Soal';val.textContent=totalCount+'/'+FIFTY}else if(gameMode==='time'){lbl.textContent='Waktu';val.textContent=Math.ceil(clockLeft)+'s'}else{lbl.textContent='Nyawa';val.textContent='❤️'.repeat(lives)}}
+    function startGame(){score=0;streak=0;bestStreak=0;wrongCount=0;totalCount=0;lives=MAX_LIVES;clearKeyTimer();clearClock();updateStats();makeStreakBar();updateLivesUI();updateStat4();document.getElementById('ov-start').style.display='none';document.getElementById('ov-result').style.display='none';document.getElementById('key-display').style.display='flex';active=true;if(gameMode==='time'){clockLeft=TIME_SECS;clockTimer=setInterval(()=>{clockLeft=Math.max(0,clockLeft-0.1);updateStat4();if(clockLeft<=0){clearInterval(clockTimer);endGame()}},100)}nextKey()}
+    function nextKey(){if(!active)return;if(gameMode==='fifty'&&totalCount>=FIFTY){endGame();return}clearKeyTimer();currentKey=pool[Math.floor(Math.random()*pool.length)];renderKey();startKeyTimer()}
+    function renderKey(state){const cap=document.getElementById('key-cap'),km=document.getElementById('key-main'),kb=document.getElementById('key-badge'),kh=document.getElementById('key-hint');km.textContent=currentKey.display;km.style.fontSize=currentKey.isFn?'22px':'34px';kb.textContent=currentKey.badge;kb.className='key-badge '+(currentKey.badgeClass||'badge-lower');kh.textContent=currentKey.hint||'';cap.className='key-cap'+(state?' '+state:'')}
+    function startKeyTimer(){const fill=document.getElementById('tfill');fill.style.width='100%';fill.style.background='#1a6ef5';if(gameMode==='time')return;const lim=currentKey.isFn?KEY_TIME*1.5:KEY_TIME;const start=Date.now();keyTimer=setInterval(()=>{const pct=Math.max(0,1-(Date.now()-start)/lim);fill.style.width=(pct*100)+'%';if(pct<0.3)fill.style.background='#e03030';else if(pct<0.6)fill.style.background='#e07a00';if(pct<=0){clearKeyTimer();onTimeout()}},50)}
+    function clearKeyTimer(){if(keyTimer){clearInterval(keyTimer);keyTimer=null}}
+    function clearClock(){if(clockTimer){clearInterval(clockTimer);clockTimer=null}}
+    function onTimeout(){if(!active)return;wrongCount++;streak=0;totalCount++;if(gameMode==='survival'){lives--;updateLivesUI();if(lives<=0){renderKey('wrong');setTimeout(()=>endGame(),600);return}}updateStats();makeStreakBar();updateStat4();flashFeedback(false);renderKey('wrong');setTimeout(()=>nextKey(),650)}
+    function handleKey(e){if(!active||!currentKey)return;if(currentKey.isFn&&e.key.match(/^F\d+$/))e.preventDefault();else if(e.key.length===1)e.preventDefault();else return;const isCorrect=currentKey.isFn?e.key===currentKey.key:e.key===currentKey.key;clearKeyTimer();totalCount++;if(isCorrect){streak++;if(streak>bestStreak)bestStreak=streak;const bonus=streak>=5?Math.floor(streak/5)*5:0;score+=10+bonus;updateStats();makeStreakBar();updateStat4();flashFeedback(true);renderKey('correct');showCombo(streak);if(gameMode==='fifty'&&totalCount>=FIFTY){setTimeout(()=>endGame(),400);return}setTimeout(()=>nextKey(),380)}else{wrongCount++;streak=0;if(gameMode==='survival')lives--;updateStats();makeStreakBar();updateStat4();flashFeedback(false);renderKey('wrong');if(gameMode==='survival'){updateLivesUI();if(lives<=0){setTimeout(()=>endGame(),600);return}}setTimeout(()=>nextKey(),650)}}
+    function showCombo(s){const cp=document.getElementById('combo-pop');if(s>=3){cp.textContent=s>=10?'MAX STREAK!':s>=5?'x'+s+' combo!':'x'+s;cp.className='show';setTimeout(()=>cp.className='',800)}else cp.className=''}
+    function flashFeedback(ok){const f=document.getElementById('feedback-flash');f.style.background=ok?'rgba(22,160,92,0.12)':'rgba(224,48,48,0.12)';f.className='show';setTimeout(()=>f.className='',ok?350:600)}
+    function updateStats(){document.getElementById('score').textContent=score;document.getElementById('streak').textContent=streak;document.getElementById('best').textContent=bestStreak}
+    function endGame(){active=false;clearKeyTimer();clearClock();document.getElementById('key-display').style.display='none';document.getElementById('ov-result').style.display='flex';const acc=totalCount>0?Math.round(((totalCount-wrongCount)/totalCount)*100):0;const titles={fifty:score>=400?'Mantap!':score>=200?'Lumayan!':'Ayo latihan lagi!',time:score>=500?'Speed demon!':score>=250?'Lumayan cepat!':'Ayo latihan lagi!',survival:lives>0?'Selamat!':'Game over!'};document.getElementById('r-em').textContent=acc>=80?'🎉':acc>=50?'👍':'💪';document.getElementById('r-title').textContent=titles[gameMode];document.getElementById('r-score').textContent=score;document.getElementById('r-streak').textContent=bestStreak;document.getElementById('r-acc').textContent=acc+'%';document.getElementById('r-total').textContent=totalCount}
+    document.addEventListener('keydown',e=>{if(!active)return;if(currentKey?.isFn&&e.key.match(/^F\d+$/)){e.preventDefault();handleKey(e);return}if(e.key.length===1)handleKey(e)});
+    makeStreakBar();
+  </script>
+</body>
+</html>

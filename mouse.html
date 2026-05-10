@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klik Mouse — Keypress Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --blue:#1a6ef5;--blue-light:#e8f0fe;--green:#16a05c;--green-light:#e6f9f0;
+      --red:#e03030;--amber:#e07a00;--amber-light:#fff3e0;
+      --gray:#f4f5f7;--gray2:#e8eaed;--text:#1a1a2e;--text2:#5a5f72;--white:#fff;
+      --radius:16px;--radius-sm:10px;--shadow:0 4px 24px rgba(26,110,245,0.10);
+    }
+    body { font-family:'Nunito',sans-serif;background:#f0f4ff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;color:var(--text); }
+    .topbar { width:100%;max-width:560px;display:flex;align-items:center;gap:8px;margin-bottom:16px; }
+    .back { text-decoration:none;font-size:13px;color:var(--text2);font-weight:700;display:flex;align-items:center;gap:4px; }
+    .back:hover { color:var(--blue); }
+    header { text-align:center;margin-bottom:20px; }
+    header h1 { font-size:22px;font-weight:800;color:var(--blue); }
+    header p { font-size:13px;color:var(--text2);margin-top:4px; }
+    .card { background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;width:100%;max-width:560px; }
+    .stats { display:flex;gap:10px;margin-bottom:16px; }
+    .stat { flex:1;background:var(--gray);border-radius:var(--radius-sm);padding:10px;text-align:center; }
+    .stat-label { font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em; }
+    .stat-val { font-size:24px;font-weight:800;color:var(--text);margin-top:2px; }
+    .mode-label { font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em; }
+    .row { display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px; }
+    .pill { flex:1;min-width:70px;border:2px solid var(--gray2);background:var(--white);color:var(--text2);border-radius:var(--radius-sm);padding:7px 6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif; }
+    .pill:hover { border-color:var(--blue);color:var(--blue); }
+    .pill.on { border-color:var(--blue);background:var(--blue);color:var(--white); }
+    .dots { display:flex;gap:5px;justify-content:center;margin-bottom:12px; }
+    .dot { width:10px;height:10px;border-radius:50%;background:var(--gray2);transition:background .2s; }
+    .dot.ok { background:var(--green); } .dot.no { background:var(--red); } .dot.cur { background:var(--blue); }
+    #arena { position:relative;width:100%;height:260px;background:var(--gray);border-radius:var(--radius);overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:12px; }
+    .side-ind { position:absolute;top:50%;transform:translateY(-50%);font-size:13px;font-weight:700;opacity:0;transition:opacity .15s;pointer-events:none; }
+    #ind-left { left:12px;color:var(--blue); } #ind-right { right:12px;color:var(--green); }
+    #click-zone { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer; }
+    #prompt-box { text-align:center;pointer-events:none; }
+    #ptext { font-size:32px;font-weight:800;letter-spacing:-.5px; }
+    #psub { font-size:13px;color:var(--text2);font-weight:600;margin-top:6px; }
+    #floating-btn { position:absolute;width:120px;height:120px;border-radius:50%;display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;gap:4px;border:3px solid var(--blue);background:var(--blue-light); }
+    #floating-btn span { font-size:13px;font-weight:700;color:#0d47a1; }
+    #feedback { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:64px;opacity:0;pointer-events:none;border-radius:var(--radius);transition:opacity .1s; }
+    #feedback.show { opacity:1; }
+    .ov { position:absolute;inset:0;background:var(--white);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:24px;text-align:center; }
+    .ov h2 { font-size:18px;font-weight:800; } .ov p { font-size:13px;color:var(--text2);max-width:280px;line-height:1.6; }
+    .startbtn { background:var(--blue);color:var(--white);border:none;border-radius:var(--radius-sm);padding:11px 28px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px;transition:background .15s; }
+    .startbtn:hover { background:#1458cc; }
+    .rsgrid { display:flex;gap:10px; }
+    .rscard { background:var(--gray);border-radius:var(--radius-sm);padding:10px 16px;text-align:center; }
+    .rscard .v { font-size:20px;font-weight:800; } .rscard .l { font-size:11px;color:var(--text2);font-weight:700;margin-top:2px; }
+    #tbar { width:100%;height:5px;background:var(--gray2);border-radius:3px;overflow:hidden;margin-bottom:14px; }
+    #tfill { height:100%;width:100%;background:var(--blue);border-radius:3px;transition:width .08s linear,background .25s; }
+    #hint { font-size:12px;color:var(--text2);text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="topbar"><a href="index.html" class="back">← Kembali</a></div>
+  <header><h1>🖱️ Latihan Klik Mouse</h1><p>Klik kiri atau kanan sesuai perintah!</p></header>
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Skor</div><div class="stat-val" id="score">0</div></div>
+      <div class="stat"><div class="stat-label">Benar</div><div class="stat-val" id="correct" style="color:#16a05c">0</div></div>
+      <div class="stat"><div class="stat-label">Salah</div><div class="stat-val" id="wrong" style="color:#e03030">0</div></div>
+    </div>
+    <div class="mode-label">Mode tampilan</div>
+    <div class="row">
+      <button class="pill on" onclick="setMode('text',this)">Teks</button>
+      <button class="pill" onclick="setMode('icon',this)">Ikon</button>
+      <button class="pill" onclick="setMode('color',this)">Warna</button>
+      <button class="pill" onclick="setMode('mixed',this)">Campur</button>
+    </div>
+    <div class="mode-label">Kecepatan</div>
+    <div class="row">
+      <button class="pill" onclick="setDiff(5000,this)">🐢 Santai</button>
+      <button class="pill on" onclick="setDiff(3500,this)">🐇 Normal</button>
+      <button class="pill" onclick="setDiff(2000,this)">⚡ Cepat</button>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div id="arena">
+      <div class="side-ind" id="ind-left">◀ KIRI</div>
+      <div class="side-ind" id="ind-right">KANAN ▶</div>
+      <div id="click-zone" onclick="handleClick(event,'left')" oncontextmenu="handleClick(event,'right')">
+        <div id="prompt-box"><div id="ptext">—</div><div id="psub"></div></div>
+        <div id="floating-btn"><span id="fb-icon" style="font-size:26px"></span><span id="fb-label"></span></div>
+      </div>
+      <div id="feedback"></div>
+      <div class="ov" id="ov-start">
+        <div style="font-size:40px">🖱️</div>
+        <h2>Latihan Klik Mouse</h2>
+        <p>Klik di mana saja — kiri atau kanan — sesuai perintah yang muncul!</p>
+        <button class="startbtn" onclick="startGame()">Mulai</button>
+      </div>
+      <div class="ov" id="ov-result" style="display:none">
+        <div style="font-size:40px" id="r-em">🎉</div>
+        <h2 id="r-title">Selesai!</h2>
+        <div class="rsgrid">
+          <div class="rscard"><div class="v" id="r-score">0</div><div class="l">Skor</div></div>
+          <div class="rscard"><div class="v" id="r-acc" style="color:#16a05c">0%</div><div class="l">Akurasi</div></div>
+          <div class="rscard"><div class="v" id="r-ok" style="color:#16a05c">0</div><div class="l">Benar</div></div>
+        </div>
+        <button class="startbtn" onclick="startGame()">Main Lagi</button>
+      </div>
+    </div>
+    <div id="tbar"><div id="tfill"></div></div>
+    <div id="hint">💡 Klik kanan = tombol kanan mouse &nbsp;|&nbsp; Klik kiri = tombol kiri (biasa)</div>
+  </div>
+  <script>
+    const TOTAL=10;const DIFF={slow:5000,normal:3500,fast:2000};
+    let mode='text',timeLimit=3500,score=0,ok=0,bad=0,round=0;
+    let cmd=null,timer=null,fbTimeout=null,active=false,results=[];
+    const CMDS=[
+      {side:'left',label:'KLIK KIRI',sub:'Klik tombol kiri mouse',icon:'◀',bg:'#e8f0fe',border:'#1a6ef5',tc:'#0d47a1'},
+      {side:'right',label:'KLIK KANAN',sub:'Klik tombol kanan mouse',icon:'▶',bg:'#e6f9f0',border:'#16a05c',tc:'#0a5c35'}
+    ];
+    const LL=['← Kiri','KIRI','Klik Kiri'],RL=['Kanan →','KANAN','Klik Kanan'];
+    function setMode(m,btn){mode=m;document.querySelectorAll('.pill').forEach(b=>{if(['Teks','Ikon','Warna','Campur'].includes(b.textContent))b.classList.remove('on')});btn.classList.add('on')}
+    function setDiff(ms,btn){timeLimit=ms;document.querySelectorAll('.pill').forEach(b=>{if(b.textContent.includes('Santai')||b.textContent.includes('Normal')||b.textContent.includes('Cepat'))b.classList.remove('on')});btn.classList.add('on')}
+    function makeDots(){const c=document.getElementById('dots');c.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='dot';if(results[i]===true)d.classList.add('ok');else if(results[i]===false)d.classList.add('no');else if(i===round)d.classList.add('cur');c.appendChild(d)}}
+    function startGame(){score=0;ok=0;bad=0;round=0;results=[];updateStats();makeDots();document.getElementById('ov-start').style.display='none';document.getElementById('ov-result').style.display='none';active=true;nextRound()}
+    function nextRound(){if(round>=TOTAL){endGame();return}clearTimer();cmd=CMDS[Math.random()<0.5?0:1];makeDots();renderPrompt();startTimer()}
+    function renderPrompt(){const fb=document.getElementById('feedback');fb.className='';fb.textContent='';const pb=document.getElementById('prompt-box'),fbt=document.getElementById('floating-btn');pb.style.opacity='1';fbt.style.opacity='1';document.getElementById('ind-left').style.opacity='0';document.getElementById('ind-right').style.opacity='0';let eff=mode;if(mode==='mixed')eff=['text','icon','color'][Math.floor(Math.random()*3)];if(eff==='color'){pb.style.display='none';fbt.style.display='flex';fbt.style.background=cmd.bg;fbt.style.borderColor=cmd.border;document.getElementById('fb-icon').textContent=cmd.icon;const labels=cmd.side==='left'?LL:RL;document.getElementById('fb-label').textContent=labels[Math.floor(Math.random()*labels.length)];document.getElementById('fb-label').style.color=cmd.tc;const arena=document.getElementById('arena'),W=arena.offsetWidth,H=arena.offsetHeight;fbt.style.left=(20+Math.random()*(W-160))+'px';fbt.style.top=(20+Math.random()*(H-160))+'px';fbt.style.position='absolute';}else{fbt.style.display='none';pb.style.display='flex';pb.style.flexDirection='column';pb.style.alignItems='center';const pt=document.getElementById('ptext'),ps=document.getElementById('psub');if(eff==='text'){pt.textContent=cmd.label;pt.style.color=cmd.side==='left'?'#1a6ef5':'#16a05c';pt.style.fontSize='32px';ps.textContent=cmd.sub;document.getElementById(cmd.side==='left'?'ind-left':'ind-right').style.opacity='0.3';}else{pt.textContent=cmd.icon+' '+(cmd.side==='left'?'Kiri':'Kanan');pt.style.color='#1a1a2e';pt.style.fontSize='38px';ps.textContent=cmd.sub;}}}
+    function startTimer(){const fill=document.getElementById('tfill');fill.style.width='100%';fill.style.background='#1a6ef5';const start=Date.now();timer=setInterval(()=>{const pct=Math.max(0,1-(Date.now()-start)/timeLimit);fill.style.width=(pct*100)+'%';if(pct<0.3)fill.style.background='#e03030';else if(pct<0.6)fill.style.background='#e07a00';if(pct<=0){clearTimer();onTimeout();}},50)}
+    function clearTimer(){if(timer){clearInterval(timer);timer=null}}
+    function handleClick(e,side){e.preventDefault();if(!active||!cmd)return;clearTimer();const correct=side===cmd.side;results[round]=correct;if(correct){score+=10;ok++}else{score=Math.max(0,score-5);bad++}round++;updateStats();showFeedback(correct)}
+    function onTimeout(){if(!active)return;results[round]=false;bad++;score=Math.max(0,score-3);round++;updateStats();showFeedback(false,true)}
+    function showFeedback(correct,timeout=false){const fb=document.getElementById('feedback'),pb=document.getElementById('prompt-box'),fbt=document.getElementById('floating-btn');fb.textContent=correct?'✅':(timeout?'⏰':'❌');fb.style.background=correct?'rgba(22,160,92,0.12)':'rgba(224,48,48,0.12)';fb.className='show';pb.style.opacity='0.2';fbt.style.opacity='0.2';document.getElementById('ind-left').style.opacity='0';document.getElementById('ind-right').style.opacity='0';makeDots();if(fbTimeout)clearTimeout(fbTimeout);fbTimeout=setTimeout(()=>{fb.className='';nextRound()},680)}
+    function updateStats(){document.getElementById('score').textContent=score;document.getElementById('correct').textContent=ok;document.getElementById('wrong').textContent=bad}
+    function endGame(){active=false;clearTimer();const acc=Math.round((ok/TOTAL)*100);document.getElementById('ov-result').style.display='flex';document.getElementById('r-em').textContent=acc>=80?'🎉':acc>=50?'👍':'💪';document.getElementById('r-title').textContent=acc>=80?'Luar biasa!':acc>=50?'Lumayan!':'Ayo latihan lagi!';document.getElementById('r-score').textContent=score;document.getElementById('r-acc').textContent=acc+'%';document.getElementById('r-ok').textContent=ok+'/'+TOTAL;makeDots()}
+    document.addEventListener('contextmenu',e=>{if(active)e.preventDefault()});
+  </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Keypress Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f0f4ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .hero { text-align: center; margin-bottom: 40px; }
+    .hero h1 { font-size: 36px; font-weight: 900; color: #185FA5; letter-spacing: -1px; }
+    .hero p { font-size: 15px; color: #666; margin-top: 8px; max-width: 360px; line-height: 1.6; }
+    .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(26,110,245,0.10);
+      padding: 32px 28px;
+      width: 240px;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(26,110,245,0.16); }
+    .card .icon { font-size: 52px; }
+    .card h2 { font-size: 18px; font-weight: 800; color: #1a1a2e; }
+    .card p { font-size: 13px; color: #666; line-height: 1.5; }
+    .card .badge {
+      background: #E6F1FB;
+      color: #0C447C;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 4px;
+    }
+    .card.green .badge { background: #E1F5EE; color: #085041; }
+    footer { margin-top: 48px; font-size: 12px; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>⌨️ Keypress Game</h1>
+    <p>Kumpulan mini-game seru buat latihan penggunaan mouse dan keyboard!</p>
+  </div>
+
+  <div class="cards">
+    <a href="mouse.html" class="card">
+      <div class="icon">🖱️</div>
+      <h2>Klik Mouse</h2>
+      <p>Latihan bedain klik kiri dan kanan mouse dengan cepat dan tepat.</p>
+      <div class="badge">Klik kiri vs kanan</div>
+    </a>
+    <a href="keyboard.html" class="card green">
+      <div class="icon">⌨️</div>
+      <h2>Tekan Tombol</h2>
+      <p>Latihan menekan tombol keyboard — huruf, angka, simbol, sampai F1–F12!</p>
+      <div class="badge green">Huruf · Angka · Simbol</div>
+    </a>
+  </div>
+
+  <footer>Dibuat dengan ❤️ buat para murid</footer>
+</body>
+</html>
