@@ -35,7 +35,7 @@ Buka langsung di browser — gak perlu install apa-apa!
 
 **Via GitHub Pages:**
 ```
-https://<username>.github.io/keypress-game/
+https://xxcuties.github.io/keypress-game/
 ```
 
 **Atau buka file lokal:**
@@ -54,12 +54,12 @@ keypress-game/
 ├── index.html      ← halaman pilih game
 ├── mouse.html      ← game klik mouse
 ├── keyboard.html   ← game tekan tombol
-└── README.md       ← ini!
+└── README.md       ← ini yang lagi kamu baca!
 ```
 
 ---
 
-## 🛠️ Deploy ke GitHub Pages
+## 🛠️ Deploy ke GitHub Pagesmu?
 
 1. Upload semua file ke repo GitHub
 2. Buka **Settings → Pages**
