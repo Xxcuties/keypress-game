@@ -67,7 +67,18 @@ keypress-game/
 4. Tunggu 1–2 menit, link otomatis muncul! ✨
 
 ---
-
+## ⚠️ Catatan penting untuk guru — simbol & tombol fungsi
+ 
+Level **+ Simbol** (`!, @, #, $`, dst) dan **+ F1–F12** sebaiknya hanya digunakan jika:
+ 
+- Keyboard komputer sudah dipastikan menggunakan **layout US standar** (layout paling umum)
+- Guru sudah menjelaskan terlebih dahulu letak tombol simbol di keyboard yang dipakai
+**Kenapa?** Posisi tombol simbol bisa berbeda tergantung layout keyboard. Misalnya `@` di layout US ada di `Shift+2`, tapi di layout lain bisa di posisi berbeda. Kalau layout-nya beda, murid menekan tombol yang "benar" tapi game menganggap salah.
+ 
+**Rekomendasi aman untuk komputer sekolah:**
+- Gunakan level **a–z kecil**, **A–Z kapital**, **a–z + A–Z**, dan **+ Angka** — dijamin sama di semua keyboard
+- Level simbol dan F1–F12 jadikan **bonus tantangan** setelah guru memastikan layout keyboard
+---
 ## 💡 Tips buat guru
 
 - Mulai murid dari mode **Santai** + kesulitan **a–z kecil** dulu
